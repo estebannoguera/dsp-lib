@@ -1,0 +1,127 @@
+# Build directories
+
+build/
+cmake-build-*/
+out/
+
+# CMake
+
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+CTestTestfile.cmake
+Testing/
+compile_commands.json
+
+# Ninja
+
+.ninja_deps
+.ninja_log
+
+# Visual Studio
+
+.vs/
+*.vcxproj*
+*.sln
+*.user
+*.VC.db
+*.VC.opendb
+
+# VS Code
+
+.vscode/
+
+# CLion
+
+.idea/
+
+# Xcode
+
+DerivedData/
+*.xcodeproj/
+*.xcworkspace/
+
+# macOS
+
+.DS_Store
+
+# Linux
+
+*.swp
+*.swo
+
+# Executables
+
+*.exe
+*.out
+*.app
+
+# Libraries
+
+*.a
+*.so
+*.so.*
+*.dylib
+
+# Object files
+
+*.o
+*.obj
+
+# Debug symbols
+
+*.pdb
+*.dSYM/
+
+# Coverage
+
+*.gcda
+*.gcno
+*.gcov
+coverage/
+coverage-report/
+
+# Benchmarks outputs
+
+benchmarks/results/
+
+# Generated documentation
+
+docs/generated/
+
+# Logs
+
+*.log
+
+# Temporary files
+
+tmp/
+temp/
+
+# Audio files generated during testing
+
+*.wav
+*.flac
+*.aiff
+
+# Google Test cache
+
+_testing/
+
+# Qt generated files (future)
+
+moc_*.cpp
+ui_*.h
+qrc_*.cpp
+
+# Python (tools/)
+
+**pycache**/
+*.pyc
+*.pyo
+
+# Environment files
+
+.env
+.env.local
