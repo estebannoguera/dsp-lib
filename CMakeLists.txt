@@ -42,7 +42,10 @@ enable_testing()
 
 add_executable(
     dsp_tests
-    tests/test_main.cpp
+    tests/containers/ring_buffer_tests.cpp
+    tests/core/delay_line_tests.cpp
+    tests/filters/moving_average_tests.cpp
+    tests/filters/FIR_filter_tests.cpp
 )
 
 target_link_libraries(

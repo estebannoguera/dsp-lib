@@ -5,27 +5,29 @@
 template<typename T>
 
 class RingBuffer {
-    int capacity;
-    T* buffer;
-    int writeIndex;
-    int count;
+    std::vector<T> buffer;
+    size_t capacity;
+    size_t writeIndex;
+    size_t count;
+
 
     public:
     
 
-    RingBuffer(int capacity) : capacity(capacity), writeIndex(0), count(0) {
-        if (capacity <= 0) {
+    RingBuffer(size_t capacity)
+        : buffer(capacity),
+        capacity(capacity),
+        writeIndex(0),
+        count(0)
+    {
+        if (capacity == 0) {
             throw std::invalid_argument("Capacity must be greater than 0");
         }
-        buffer = new T[capacity];
     }
 
     RingBuffer(const RingBuffer&) = delete;
     RingBuffer& operator=(const RingBuffer&) = delete;
 
-    ~RingBuffer() {
-    delete[] buffer;
-}
 
     void write(T sample) {
         buffer[writeIndex] = sample;
@@ -35,7 +37,7 @@ class RingBuffer {
         }
     }
 
-    T getDelayed(int samplesAgo) const {
+    T getDelayed(size_t samplesAgo) const {
 
         if(samplesAgo < 0)
         {
@@ -46,10 +48,11 @@ class RingBuffer {
         {
             return T{};
         }
-        
-        int latestIndex = (writeIndex - 1 + capacity) % capacity;
 
-        int readIndex = (latestIndex - samplesAgo + capacity) % capacity;
+        size_t latestIndex = (writeIndex - 1 + capacity) % capacity;
+
+        size_t readIndex = (latestIndex - samplesAgo + capacity) % capacity;
+
         return buffer[readIndex];
     }
 
