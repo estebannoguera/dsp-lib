@@ -1,33 +1,29 @@
 #include <gtest/gtest.h>
 #include "core/delay_line.hpp"
 
-TEST(DelayLine, WorksWithDifferentTypes)
+TEST(DelayLine, MixBlendsDryAndDelayedSignal)
 {
-    {
-        DelayLine<int> delay(3);
+    DelayLine<float> delay(1, 1, 0.0f, 0.5f);
 
-        EXPECT_EQ(delay.processSample(1), 0);
-        EXPECT_EQ(delay.processSample(2), 0);
-        EXPECT_EQ(delay.processSample(3), 0);
-        EXPECT_EQ(delay.processSample(4), 1);
-    }
-
-    {
-        DelayLine<float> delay(3);
-
-        EXPECT_FLOAT_EQ(delay.processSample(1.0f), 0.0f);
-        EXPECT_FLOAT_EQ(delay.processSample(2.0f), 0.0f);
-        EXPECT_FLOAT_EQ(delay.processSample(3.0f), 0.0f);
-        EXPECT_FLOAT_EQ(delay.processSample(4.0f), 1.0f);
-    }
+    EXPECT_FLOAT_EQ(delay.processSample(1.0f), 0.5f);
+    EXPECT_FLOAT_EQ(delay.processSample(0.0f), 0.5f);
+    EXPECT_FLOAT_EQ(delay.processSample(0.0f), 0.0f);
 }
 
-TEST(DelayLineTest, ZeroDelayActsAsIdentity)
+TEST(DelayLine, FeedbackRecirculatesIntoTheBuffer)
 {
-    DelayLine<int> delay(0);
+    DelayLine<float> delay(1, 1, 0.5f, 1.0f);
 
-    EXPECT_EQ(delay.processSample(1), 1);
-    EXPECT_EQ(delay.processSample(2), 2);
-    EXPECT_EQ(delay.processSample(3), 3);
+    EXPECT_FLOAT_EQ(delay.processSample(1.0f), 0.0f);
+    EXPECT_FLOAT_EQ(delay.processSample(0.0f), 1.0f);
+    EXPECT_FLOAT_EQ(delay.processSample(0.0f), 0.5f);
+    EXPECT_FLOAT_EQ(delay.processSample(0.0f), 0.25f);
+}
 
+TEST(DelayLine, RejectsFeedbackAndMixOutsideZeroToOne)
+{
+    EXPECT_THROW(DelayLine<float>(1, 1, -0.1f, 0.5f), std::invalid_argument);
+    EXPECT_THROW(DelayLine<float>(1, 1, 1.1f, 0.5f), std::invalid_argument);
+    EXPECT_THROW(DelayLine<float>(1, 1, 0.5f, -0.1f), std::invalid_argument);
+    EXPECT_THROW(DelayLine<float>(1, 1, 0.5f, 1.1f), std::invalid_argument);
 }

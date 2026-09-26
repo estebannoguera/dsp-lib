@@ -125,3 +125,5 @@ qrc_*.cpp
 
 .env
 .env.local
+
+.cache/
