@@ -2,6 +2,8 @@
 
 #include <stdexcept>
 
+#include <vector>
+
 template<typename T>
 
 class RingBuffer {
