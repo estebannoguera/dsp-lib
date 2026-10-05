@@ -1,9 +1,7 @@
 #include "containers/ring_buffer.hpp"
 #include <vector>
 
-template<typename T>
-
-class FIRFilter{
+template<typename T> class FIRFilter{
 
     private:
         static size_t validateSize(const std::vector<T>& coefficients)

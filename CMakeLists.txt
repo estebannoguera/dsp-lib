@@ -47,6 +47,9 @@ add_executable(
     tests/filters/moving_average_tests.cpp
     tests/filters/FIR_filter_tests.cpp
     tests/filters/biquad_tests.cpp
+    tests/filters/biquad_DF2T_tests.cpp
+    tests/modulation/lfo_tests.cpp
+    tests/modulation/chorus_tests.cpp
 )
 
 target_link_libraries(

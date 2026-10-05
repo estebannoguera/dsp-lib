@@ -14,7 +14,7 @@ class DelayLine {
         float mix = 0.0f;
 
     public:
-        explicit DelayLine(size_t bufferSize, size_t delaySamples, float feedback, float mix)
+        DelayLine(size_t bufferSize, size_t delaySamples, float feedback, float mix)
             : buffer(std::max(bufferSize, size_t(1))),
             delaySamples(delaySamples),
             feedback(feedback > 1 ? 1 : feedback < 0 ? 0 : feedback),

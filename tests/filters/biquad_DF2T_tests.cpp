@@ -1,19 +1,19 @@
 #include <gtest/gtest.h>
-#include "filters/biquad.hpp"
+#include "filters/biquadDF2T.hpp"
 #include "filters/rbj_design.hpp"
 
-TEST(BiquadEngine, PassesInputWhenOnlyB0IsOne)
+TEST(BiquadDF2T, PassesInputWhenOnlyB0IsOne)
 {
-    BiquadEngine<float> filter;
+    BiquadDF2T<float> filter;
     filter.setCoefficients({1.0f, 0.0f, 0.0f, 0.0f, 0.0f});
 
     EXPECT_FLOAT_EQ(filter.processSample(1.0f), 1.0f);
     EXPECT_FLOAT_EQ(filter.processSample(2.0f), 2.0f);
 }
 
-TEST(BiquadEngine, B1DelaysTheInputByOneSample)
+TEST(BiquadDF2T, B1DelaysTheInputByOneSample)
 {
-    BiquadEngine<float> filter;
+    BiquadDF2T<float> filter;
     filter.setCoefficients({0.0f, 1.0f, 0.0f, 0.0f, 0.0f});
 
     EXPECT_FLOAT_EQ(filter.processSample(1.0f), 0.0f);
@@ -21,9 +21,20 @@ TEST(BiquadEngine, B1DelaysTheInputByOneSample)
     EXPECT_FLOAT_EQ(filter.processSample(3.0f), 2.0f);
 }
 
-TEST(BiquadEngine, A1FeedsThePreviousOutputBack)
+TEST(BiquadDF2T, B2DelaysTheInputByTwoSamples)
 {
-    BiquadEngine<float> filter;
+    BiquadDF2T<float> filter;
+    filter.setCoefficients({0.0f, 0.0f, 1.0f, 0.0f, 0.0f});
+
+    EXPECT_FLOAT_EQ(filter.processSample(1.0f), 0.0f);
+    EXPECT_FLOAT_EQ(filter.processSample(2.0f), 0.0f);
+    EXPECT_FLOAT_EQ(filter.processSample(3.0f), 1.0f);
+    EXPECT_FLOAT_EQ(filter.processSample(4.0f), 2.0f);
+}
+
+TEST(BiquadDF2T, A1FeedsThePreviousOutputBack)
+{
+    BiquadDF2T<float> filter;
     filter.setCoefficients({1.0f, 0.0f, 0.0f, -0.5f, 0.0f});
 
     EXPECT_FLOAT_EQ(filter.processSample(1.0f), 1.0f);
@@ -31,9 +42,9 @@ TEST(BiquadEngine, A1FeedsThePreviousOutputBack)
     EXPECT_FLOAT_EQ(filter.processSample(0.0f), 0.25f);
 }
 
-TEST(LPF, SettlesToOneForAConstantInput)
+TEST(BiquadDF2T, LowpassSettlesToOneForAConstantInput)
 {
-    BiquadEngine<float> filter;
+    BiquadDF2T<float> filter;
     filter.setCoefficients(LPF<float>::calculate(48000.0f, 1000.0f, 0.707f));
 
     float output = 0.0f;
