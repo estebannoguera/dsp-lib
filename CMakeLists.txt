@@ -46,6 +46,7 @@ add_executable(
     tests/core/delay_line_tests.cpp
     tests/filters/moving_average_tests.cpp
     tests/filters/FIR_filter_tests.cpp
+    tests/filters/biquad_tests.cpp
 )
 
 target_link_libraries(

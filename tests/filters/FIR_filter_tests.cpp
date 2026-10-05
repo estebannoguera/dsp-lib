@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "filters/FIR_filter.cpp"
+#include "filters/fir_filter.hpp"
 
 
 TEST(FIRFilter, ThrowsOnEmptyCoefficients) {
