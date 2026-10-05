@@ -3,9 +3,9 @@
 
 TEST(Chorus, PassesDrySignalWhenMixIsZero)
 {
-    Chorus<float> single(1, 44100.0f, 1.0f, 1, 0, 0.0f);
-    Chorus<float> dual(2, 44100.0f, 1.0f, 1, 0, 0.0f);
-    Chorus<float> tri(3, 44100.0f, 1.0f, 1, 0, 0.0f);
+    Chorus<float> single(Chorus<float>::ChorusType::ChorusEngine, 44100.0f, 1.0f, 1, 0, 0.0f);
+    Chorus<float> dual(Chorus<float>::ChorusType::DualChorus, 44100.0f, 1.0f, 1, 0, 0.0f);
+    Chorus<float> tri(Chorus<float>::ChorusType::TriChorus, 44100.0f, 1.0f, 1, 0, 0.0f);
 
     EXPECT_FLOAT_EQ(single.processSample(0.5f), 0.5f);
     EXPECT_FLOAT_EQ(dual.processSample(0.5f), 0.5f);
@@ -14,7 +14,7 @@ TEST(Chorus, PassesDrySignalWhenMixIsZero)
 
 TEST(Chorus, OneVoiceReturnsTheBaseDelayWhenDepthIsZero)
 {
-    Chorus<float> chorus(1, 44100.0f, 0.0f, 1, 0, 1.0f);
+    Chorus<float> chorus(Chorus<float>::ChorusType::ChorusEngine, 44100.0f, 0.0f, 1, 0, 1.0f);
 
     EXPECT_FLOAT_EQ(chorus.processSample(1.0f), 0.0f);
     EXPECT_FLOAT_EQ(chorus.processSample(0.0f), 1.0f);
@@ -23,7 +23,7 @@ TEST(Chorus, OneVoiceReturnsTheBaseDelayWhenDepthIsZero)
 
 TEST(Chorus, ExposesEachVoiceSoTheClientCanPan)
 {
-    Chorus<float> dual(2, 44100.0f, 0.0f, 1, 1, 1.0f);
+    Chorus<float> dual(Chorus<float>::ChorusType::DualChorus, 44100.0f, 0.0f, 1, 1, 1.0f);
     float voices[2] = {};
 
     dual.processSample(1.0f, voices);
@@ -38,8 +38,8 @@ TEST(Chorus, ExposesEachVoiceSoTheClientCanPan)
 
 TEST(Chorus, RejectsZeroVoicesBaseDelayAndMixOutsideZeroToOne)
 {
-    EXPECT_THROW(Chorus<float>(0, 44100.0f, 1.0f, 1, 0, 0.5f), std::invalid_argument);
-    EXPECT_THROW(Chorus<float>(1, 44100.0f, 1.0f, 0, 0, 0.5f), std::invalid_argument);
-    EXPECT_THROW(Chorus<float>(1, 44100.0f, 1.0f, 1, 0, -0.1f), std::invalid_argument);
-    EXPECT_THROW(Chorus<float>(1, 44100.0f, 1.0f, 1, 0, 1.1f), std::invalid_argument);
+    EXPECT_THROW(Chorus<float>(static_cast<Chorus<float>::ChorusType>(0), 44100.0f, 1.0f, 1, 0, 0.5f), std::invalid_argument);
+    EXPECT_THROW(Chorus<float>(Chorus<float>::ChorusType::ChorusEngine, 44100.0f, 1.0f, 0, 0, 0.5f), std::invalid_argument);
+    EXPECT_THROW(Chorus<float>(Chorus<float>::ChorusType::ChorusEngine, 44100.0f, 1.0f, 1, 0, -0.1f), std::invalid_argument);
+    EXPECT_THROW(Chorus<float>(Chorus<float>::ChorusType::ChorusEngine, 44100.0f, 1.0f, 1, 0, 1.1f), std::invalid_argument);
 }

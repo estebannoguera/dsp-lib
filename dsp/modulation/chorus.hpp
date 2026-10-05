@@ -3,11 +3,15 @@
 #include <cstddef>
 #include <memory>
 #include <stdexcept>
+#include <type_traits>
 #include <vector>
 
 template<typename T>
 
 class Chorus {
+
+    public:
+        enum class ChorusType { ChorusEngine = 1, DualChorus = 2, TriChorus = 3 };
 
     private:
         std::vector<LFO<T>> lfos;
@@ -15,16 +19,22 @@ class Chorus {
         size_t baseDelaySamples;
         size_t depthSamples;
         T mix;
+        ChorusType chorusType;
 
     public:
-        Chorus(size_t voiceCount, T sampleRate, T frequency, size_t baseDelaySamples, size_t depthSamples, T mix)
+        Chorus(ChorusType chorusType, T sampleRate, T frequency, size_t baseDelaySamples, size_t depthSamples, T mix)
             : baseDelaySamples(baseDelaySamples),
             depthSamples(depthSamples),
-            mix(mix)
+            mix(mix),
+            chorusType(chorusType)
         {
-            if (voiceCount == 0)
+            using Underlying = std::underlying_type_t<ChorusType>;
+            auto voiceCount = static_cast<Underlying>(chorusType);
+
+            if (voiceCount < static_cast<Underlying>(ChorusType::ChorusEngine) ||
+                voiceCount > static_cast<Underlying>(ChorusType::TriChorus))
             {
-                throw std::invalid_argument("Voice count must be at least 1");
+                throw std::invalid_argument("Chorus type must be between ChorusEngine and TriChorus");
             }
 
             if (baseDelaySamples == 0)
@@ -37,12 +47,12 @@ class Chorus {
                 throw std::invalid_argument("Mix must be between 0 and 1");
             }
 
-            lfos.reserve(voiceCount);
-            delays.reserve(voiceCount);
+            lfos.reserve(static_cast<size_t>(voiceCount));
+            delays.reserve(static_cast<size_t>(voiceCount));
 
             size_t bufferSize = baseDelaySamples + depthSamples;
 
-            for (size_t voice = 0; voice < voiceCount; ++voice)
+            for (size_t voice = 0; voice < static_cast<size_t>(voiceCount); ++voice)
             {
                 T phase = static_cast<T>(voice) / static_cast<T>(voiceCount);
                 lfos.emplace_back(sampleRate, frequency, LFO<T>::Waveform::Triangle, phase);
