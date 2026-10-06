@@ -23,7 +23,7 @@ TEST(Chorus, OneVoiceReturnsTheBaseDelayWhenDepthIsZero)
 
 TEST(Chorus, ExposesEachVoiceSoTheClientCanPan)
 {
-    Chorus<float> dual(Chorus<float>::ChorusType::DualChorus, 44100.0f, 0.0f, 1, 1, 1.0f);
+    Chorus<float> dual(Chorus<float>::ChorusType::DualChorus, 44100.0f, 0.0f, 1, 1, 1.0f, LFO<float>::Waveform::Triangle);
     float voices[2] = {};
 
     dual.processSample(1.0f, voices);

@@ -22,7 +22,7 @@ class Chorus {
         ChorusType chorusType;
 
     public:
-        Chorus(ChorusType chorusType, T sampleRate, T frequency, size_t baseDelaySamples, size_t depthSamples, T mix)
+        Chorus(ChorusType chorusType, T sampleRate, T frequency, size_t baseDelaySamples, size_t depthSamples, T mix, LFO<T>::Waveform waveform = LFO<T>::Waveform::Sine)
             : baseDelaySamples(baseDelaySamples),
             depthSamples(depthSamples),
             mix(mix),
@@ -55,7 +55,7 @@ class Chorus {
             for (size_t voice = 0; voice < static_cast<size_t>(voiceCount); ++voice)
             {
                 T phase = static_cast<T>(voice) / static_cast<T>(voiceCount);
-                lfos.emplace_back(sampleRate, frequency, LFO<T>::Waveform::Triangle, phase);
+                lfos.emplace_back(sampleRate, frequency, waveform, phase);
                 delays.push_back(std::make_unique<RingBuffer<T>>(bufferSize));
             }
         }
