@@ -3,46 +3,34 @@
 #include "envelope_follower.hpp"
 #include "tools/utils.hpp"
 
-template <typename T>
-class Compressor
-{
+template <typename T> class Compressor {
 public:
-    Compressor(
-        T attackCoefficient,
-        T releaseCoefficient,
-        T thresholdDb,
-        T ratio)
-        : envelopeFollower(attackCoefficient, releaseCoefficient),
-          thresholdDb(thresholdDb),
-          ratio(ratio)
-    {
-    }
+  Compressor(T attackCoefficient, T releaseCoefficient, T thresholdDb, T ratio)
+      : envelopeFollower(attackCoefficient, releaseCoefficient),
+        thresholdDb(thresholdDb), ratio(ratio) {}
 
-    T processSample(T input)
-    {
-        const T amplitude = std::abs(input);
+  T processSample(T input) {
+    const T amplitude = std::abs(input);
 
-        const T envelope =
-            envelopeFollower.processSample(amplitude);
+    const T envelope = envelopeFollower.processSample(amplitude);
 
-        const T levelDb =
-            amplitudeToDecibels(envelope);
+    if (envelope == T(0))
+      return input;
 
-        const T outputLevelDb =
-            compressLevel(levelDb, thresholdDb, ratio);
+    const T levelDb = amplitudeToDecibels(envelope);
 
-        const T gainReductionDb =
-            outputLevelDb - levelDb;
+    const T outputLevelDb = compressLevel(levelDb, thresholdDb, ratio);
 
-        const T gain =
-            decibelsToLinear(gainReductionDb);
+    const T gainReductionDb = outputLevelDb - levelDb;
 
-        return input * gain;
-    }
+    const T gain = decibelsToLinear(gainReductionDb);
+
+    return input * gain;
+  }
 
 private:
-    EnvelopeFollower<T> envelopeFollower;
+  EnvelopeFollower<T> envelopeFollower;
 
-    T thresholdDb;
-    T ratio;
+  T thresholdDb;
+  T ratio;
 };

@@ -1,32 +1,27 @@
 #include "containers/ring_buffer.hpp"
 
-template<typename T>
+template <typename T>
 
-class MovingAverageFilter{
+class MovingAverageFilter {
 
-    private:
-        RingBuffer<float> history;
-        size_t windowSize;
-    
-    public:
-        explicit MovingAverageFilter(size_t windowSize)
-            : history(windowSize),
-            windowSize(windowSize)
-        {
-        }
+private:
+  RingBuffer<float> history;
+  size_t windowSize;
 
+public:
+  explicit MovingAverageFilter(size_t windowSize)
+      : history(windowSize), windowSize(windowSize) {}
 
-        T processSample(T sample){
+  T processSample(T sample) {
 
-            history.write(sample);
+    history.write(sample);
 
-            T sum = T{};
+    T sum = T{};
 
-            for(size_t i = 0; i < windowSize; ++i)
-            {
-                sum += history.getDelayed(i);
-            }
+    for (size_t i = 0; i < windowSize; ++i) {
+      sum += history.getDelayed(i);
+    }
 
-            return sum / static_cast<T>(windowSize);
-        }
+    return sum / static_cast<T>(windowSize);
+  }
 };
