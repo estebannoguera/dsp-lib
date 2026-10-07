@@ -19,6 +19,7 @@ target_include_directories(
     dsp
     INTERFACE
         ${CMAKE_CURRENT_SOURCE_DIR}/dsp
+        ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 # ---------------------------
@@ -50,6 +51,9 @@ add_executable(
     tests/filters/biquad_DF2T_tests.cpp
     tests/modulation/lfo_tests.cpp
     tests/modulation/chorus_tests.cpp
+    tests/core/envelope_follower_tests.cpp
+    tests/tools/utils_tests.cpp
+    tests/core/compressor_tests.cpp
 )
 
 target_link_libraries(
