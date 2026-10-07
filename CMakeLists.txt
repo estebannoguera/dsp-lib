@@ -19,7 +19,6 @@ target_include_directories(
     dsp
     INTERFACE
         ${CMAKE_CURRENT_SOURCE_DIR}/dsp
-        ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 # ---------------------------
