@@ -1,3 +1,4 @@
+#pragma once
 #include "containers/ring_buffer.hpp"
 #include "modulation/lfo.hpp"
 #include <cstddef>

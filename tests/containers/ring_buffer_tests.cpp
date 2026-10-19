@@ -83,3 +83,16 @@ TEST(RingBufferTest, UnderstandGetDelayedSemantics)
     EXPECT_EQ(buffer.getDelayed(1), 20);
     EXPECT_EQ(buffer.getDelayed(2), 10);
 }
+
+
+TEST(RingBufferTest, MoveTransfersContents) {
+    RingBuffer<float> a(3); a.write(1.f); a.write(2.f);
+    RingBuffer<float> b = std::move(a);
+    EXPECT_EQ(b.getDelayed(0), 2.f);
+    EXPECT_EQ(b.getCount(), 2u);
+    EXPECT_TRUE(a.isEmpty());
+  }
+  
+  static_assert(std::is_nothrow_move_constructible_v<RingBuffer<float>>);
+  static_assert(!std::is_copy_constructible_v<RingBuffer<float>>);
+  static_assert(!std::is_convertible_v<size_t, RingBuffer<float>>); 

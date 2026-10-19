@@ -1,3 +1,4 @@
+#pragma once
 #include "containers/ring_buffer.hpp"
 #include <vector>
 
