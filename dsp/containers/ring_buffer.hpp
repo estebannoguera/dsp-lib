@@ -15,7 +15,8 @@ private:
   size_t count;
 
 public:
-  explicit RingBuffer(size_t capacity) : buffer(capacity), writeIndex(0), count(0) {
+  explicit RingBuffer(size_t capacity)
+      : buffer(capacity), writeIndex(0), count(0) {
     if (capacity == 0) {
       throw std::invalid_argument("Capacity must be greater than 0");
     }
@@ -52,11 +53,8 @@ public:
       return T{};
     }
 
-    size_t latestIndex = (writeIndex - 1 + buffer.size()) % buffer.size();
-
     size_t readIndex =
-        (latestIndex - samplesAgo + buffer.size()) % buffer.size();
-
+        (writeIndex - 1 - samplesAgo + buffer.size()) % buffer.size();
     return buffer[readIndex];
   }
 

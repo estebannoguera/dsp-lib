@@ -8,6 +8,7 @@ TEST(RingBuffer, NewBufferIsEmpty)
     EXPECT_TRUE(rb.isEmpty());
     EXPECT_FALSE(rb.isFull());
     EXPECT_EQ(rb.getCount(), 0);
+    EXPECT_FLOAT_EQ(rb.getDelayed(0), 0.0f);
 }
 
 TEST(RingBuffer, NewBufferIsFull)
@@ -28,6 +29,9 @@ TEST(RingBuffer, ReturnsCorrectHistory)
 {
 
     RingBuffer<float> rb(4);
+    
+    EXPECT_FLOAT_EQ(rb.getDelayed(0), 0.0f);
+
     rb.write(1.0f);
     rb.write(2.0f);
     rb.write(3.0f);
@@ -38,11 +42,12 @@ TEST(RingBuffer, ReturnsCorrectHistory)
     EXPECT_FLOAT_EQ(rb.getDelayed(1), 3.0f);
 
     rb.write(5.0f);
+    rb.write(6.0f);
 
-    EXPECT_FLOAT_EQ(rb.getDelayed(0), 5.0f);
-    EXPECT_FLOAT_EQ(rb.getDelayed(1), 4.0f);
-    EXPECT_FLOAT_EQ(rb.getDelayed(2), 3.0f);
-    EXPECT_FLOAT_EQ(rb.getDelayed(3), 2.0f);
+    EXPECT_FLOAT_EQ(rb.getDelayed(0), 6.0f);
+    EXPECT_FLOAT_EQ(rb.getDelayed(1), 5.0f);
+    EXPECT_FLOAT_EQ(rb.getDelayed(2), 4.0f);
+    EXPECT_FLOAT_EQ(rb.getDelayed(3), 3.0f);
 
     EXPECT_FLOAT_EQ(rb.getDelayed(1000), 0.0f);
 
@@ -68,6 +73,15 @@ TEST(RingBuffer, EmptyBufferAlwaysReturnsDefault) {
 
     EXPECT_FLOAT_EQ(rb.getDelayed(0), 0.0f);
     EXPECT_FLOAT_EQ(rb.getDelayed(1), 0.0f);
+    EXPECT_FLOAT_EQ(rb.getDelayed(2), 0.0f);
+    EXPECT_FLOAT_EQ(rb.getDelayed(3), 0.0f);
+    EXPECT_FLOAT_EQ(rb.getDelayed(4), 0.0f);
+    EXPECT_FLOAT_EQ(rb.getDelayed(5), 0.0f);
+    EXPECT_FLOAT_EQ(rb.getDelayed(6), 0.0f);
+    EXPECT_FLOAT_EQ(rb.getDelayed(7), 0.0f);
+    EXPECT_FLOAT_EQ(rb.getDelayed(8), 0.0f);
+    EXPECT_FLOAT_EQ(rb.getDelayed(9), 0.0f);
+
 }
 
 
@@ -82,6 +96,7 @@ TEST(RingBufferTest, UnderstandGetDelayedSemantics)
     EXPECT_EQ(buffer.getDelayed(0), 30);
     EXPECT_EQ(buffer.getDelayed(1), 20);
     EXPECT_EQ(buffer.getDelayed(2), 10);
+    EXPECT_EQ(buffer.getDelayed(3), 0);
 }
 
 
