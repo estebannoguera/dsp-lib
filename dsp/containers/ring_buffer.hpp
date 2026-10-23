@@ -13,10 +13,18 @@ private:
   std::vector<T> buffer;
   size_t writeIndex;
   size_t count;
+  static size_t validateCapacity(size_t capacity) {
+    if (capacity == 0) {
+        throw std::invalid_argument(
+            "Capacity must be greater than 0"
+        );
+    }
+    return capacity;
+}
 
 public:
   explicit RingBuffer(size_t capacity)
-      : buffer(capacity), writeIndex(0), count(0) {
+      : buffer(validateCapacity(capacity)), writeIndex(0), count(0) {
     if (capacity == 0) {
       throw std::invalid_argument("Capacity must be greater than 0");
     }
@@ -53,8 +61,9 @@ public:
       return T{};
     }
 
-    size_t readIndex =
-        (writeIndex - 1 - samplesAgo + buffer.size()) % buffer.size();
+    const size_t readIndex =
+        (writeIndex + 2 * buffer.size() - 1 - samplesAgo) % buffer.size();
+
     return buffer[readIndex];
   }
 
@@ -63,4 +72,6 @@ public:
   bool isFull() const { return count == buffer.size(); }
 
   bool isEmpty() const { return count == 0; }
+
+  size_t getSize() const { return buffer.size(); }
 };

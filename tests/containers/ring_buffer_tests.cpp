@@ -9,7 +9,9 @@ TEST(RingBuffer, NewBufferIsEmpty)
     EXPECT_FALSE(rb.isFull());
     EXPECT_EQ(rb.getCount(), 0);
     EXPECT_FLOAT_EQ(rb.getDelayed(0), 0.0f);
+    EXPECT_EQ(rb.getSize(), 4u);
 }
+
 
 TEST(RingBuffer, NewBufferIsFull)
 {
@@ -99,6 +101,19 @@ TEST(RingBufferTest, UnderstandGetDelayedSemantics)
     EXPECT_EQ(buffer.getDelayed(3), 0);
 }
 
+TEST(RingBuffer, OverwritesOldestSample)
+{
+    RingBuffer<int> rb(3);
+    rb.write(10);
+    rb.write(20);
+    rb.write(30);
+    rb.write(40);
+
+    EXPECT_EQ(rb.getDelayed(0), 40);
+    EXPECT_EQ(rb.getDelayed(1), 30);
+    EXPECT_EQ(rb.getDelayed(2), 20);
+    EXPECT_EQ(rb.getCount(), 3u);
+}
 
 TEST(RingBufferTest, MoveTransfersContents) {
     RingBuffer<float> a(3); a.write(1.f); a.write(2.f);
@@ -108,6 +123,15 @@ TEST(RingBufferTest, MoveTransfersContents) {
     EXPECT_TRUE(a.isEmpty());
   }
   
+  TEST(RingBuffer, ReturnsConfiguredCapacity)
+{
+    RingBuffer<float> rb(4);
+
+    EXPECT_EQ(rb.getSize(), 4u);
+}
+
+
+
   static_assert(std::is_nothrow_move_constructible_v<RingBuffer<float>>);
   static_assert(!std::is_copy_constructible_v<RingBuffer<float>>);
   static_assert(!std::is_convertible_v<size_t, RingBuffer<float>>); 

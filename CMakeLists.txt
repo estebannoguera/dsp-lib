@@ -53,6 +53,7 @@ add_executable(
     tests/core/envelope_follower_tests.cpp
     tests/tools/utils_tests.cpp
     tests/core/compressor_tests.cpp
+    tests/core/hermite_interpolator_tests.cpp
 )
 
 target_link_libraries(

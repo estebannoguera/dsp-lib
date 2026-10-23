@@ -1,44 +1,64 @@
 #pragma once
 #include "containers/ring_buffer.hpp"
-#include <algorithm> // std::max
-#include <cstddef>   // size_t
-#include <stdexcept> // std::invalid_argument
+#include "core/interpolators/linear_interpolator.hpp"
+#include "core/delay_line_interpolation_helper.hpp"
+#include <cmath>       // std::isfinite
+#include <cstddef>     // size_t
+#include <stdexcept>   // std::invalid_argument
+#include <type_traits> // std::is_same_v
 
-template <typename T>
+template <typename T, typename Interpolator = LinearInterpolator>
 
 class DelayLine {
+  static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>,
+                "DelayLine requires float or double");
 
 private:
   RingBuffer<T> buffer;
-  size_t delaySamples;
-  float feedback = 0.0f;
-  float mix = 0.0f;
+  double delaySamples;
+  Interpolator interpolator;
 
 public:
-  DelayLine(size_t bufferSize, size_t delaySamples, float feedback, float mix)
-      : buffer(std::max(bufferSize, size_t(1))), delaySamples(delaySamples),
-        feedback(feedback > 1   ? 1
-                 : feedback < 0 ? 0
-                                : feedback),
-        mix(mix > 1   ? 1
-            : mix < 0 ? 0
-                      : mix) {
-    if (feedback < 0 || feedback > 1) {
-      throw std::invalid_argument("Feedback must be between 0 and 1");
+  DelayLine(size_t bufferSize, double delaySamples)
+      : buffer(bufferSize), delaySamples(delaySamples), interpolator{} {
+    if (!std::isfinite(delaySamples)) {
+      throw std::invalid_argument("Delay must be finite");
     }
-    if (mix < 0 || mix > 1) {
-      throw std::invalid_argument("Mix must be between 0 and 1");
+    if (delaySamples < 0) {
+      throw std::invalid_argument("Delay must be positive");
+    }
+    if (delaySamples > bufferSize) {
+      throw std::invalid_argument("Delay must not exceed buffer size");
     }
   }
 
   T processSample(T inputSample) {
 
-    if (delaySamples == 0) {
-      return inputSample;
+    T delayed{};
+
+    if (delaySamples > 0.0) {
+      delayed = DelayLineInterpolationHelper<T, Interpolator>::process(
+          buffer, interpolator, inputSample, delaySamples);
     }
 
-    T delayed = buffer.getDelayed(delaySamples - 1);
-    buffer.write(inputSample + delayed * feedback);
-    return delayed * mix + inputSample * (1 - mix);
+    buffer.write(inputSample);
+
+    return delaySamples == 0 ? inputSample : delayed;
   }
+
+  void setDelaySamples(double delaySamples) {
+    if (!std::isfinite(delaySamples)) {
+      throw std::invalid_argument("Delay must be finite");
+    }
+
+    if (delaySamples > buffer.getSize()) {
+      throw std::invalid_argument("Delay must not exceed buffer size");
+    }
+    if (delaySamples < 0) {
+      throw std::invalid_argument("Delay must be positive");
+    }
+    this->delaySamples = delaySamples;
+  }
+
+  double getDelaySamples() const { return delaySamples; }
 };
